@@ -1,0 +1,206 @@
+# =====================================================
+# PROPHETBET - ENVIRONMENT VARIABLES TEMPLATE
+# Copy this file to .env and fill in your actual values
+# =====================================================
+
+# =====================================================
+# SUPABASE CONFIGURATION (REQUIRED)
+# =====================================================
+
+# Your Supabase project URL (found in Supabase Dashboard > Settings > API)
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+
+# Your Supabase anonymous/public key (found in Supabase Dashboard > Settings > API)
+VITE_SUPABASE_ANON_KEY=your-anon-key-here
+
+# Supabase service role key (KEEP SECRET! Only for backend/Edge Functions)
+# Found in Supabase Dashboard > Settings > API
+VITE_SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+
+
+# =====================================================
+# EXTERNAL API KEYS (REQUIRED)
+# =====================================================
+
+# TheOddsAPI - Get odds from multiple sportsbooks
+# Sign up at: https://the-odds-api.com/
+ODDS_API_KEY=your-odds-api-key-here
+
+# DraftKings API (if using direct DK API instead of TheOddsAPI)
+# Contact DraftKings for API access
+DRAFTKINGS_API_KEY=your-draftkings-api-key-here
+
+# FanDuel API (if using direct FD API)
+FANDUEL_API_KEY=your-fanduel-api-key-here
+
+# BetMGM API (if using direct BetMGM API)
+BETMGM_API_KEY=your-betmgm-api-key-here
+
+# ESPN API Key (if required for your usage tier)
+# Most ESPN endpoints are public, but some require authentication
+ESPN_API_KEY=your-espn-api-key-here
+
+# RapidAPI Key (for additional sports data sources)
+# Sign up at: https://rapidapi.com/
+RAPIDAPI_KEY=your-rapidapi-key-here
+
+
+# =====================================================
+# APPLICATION CONFIGURATION
+# =====================================================
+
+# Application Environment
+NODE_ENV=development
+
+# API Base URL (for production deployment)
+VITE_API_BASE_URL=https://your-api-domain.com
+
+# Frontend URL (for CORS configuration)
+VITE_FRONTEND_URL=http://localhost:5173
+
+
+# =====================================================
+# FEATURE FLAGS (OPTIONAL)
+# =====================================================
+
+# Enable/disable specific sports
+VITE_ENABLE_NFL=true
+VITE_ENABLE_CFB=true
+VITE_ENABLE_NBA=true
+VITE_ENABLE_MLB=true
+VITE_ENABLE_UFC=true
+VITE_ENABLE_GOLF=true
+
+# Enable/disable features
+VITE_ENABLE_LIVE_ODDS=true
+VITE_ENABLE_PROPS_ANALYZER=true
+VITE_ENABLE_AI_LEARNING=true
+VITE_ENABLE_ALERTS=true
+
+# Analyzer settings
+VITE_DEFAULT_ANALYZER_VERSION=v10000plus
+VITE_MIN_CONFIDENCE_THRESHOLD=60
+
+
+# =====================================================
+# AUTOMATION & SCHEDULING (OPTIONAL)
+# =====================================================
+
+# Cron schedule for automated tasks (if using cron-based scheduling)
+# Format: "minute hour day month weekday"
+
+# Update schedules daily at 6 AM
+CRON_UPDATE_SCHEDULES="0 6 * * *"
+
+# Fetch odds every hour
+CRON_FETCH_ODDS="0 * * * *"
+
+# Run analyzer every 2 hours
+CRON_RUN_ANALYZER="0 */2 * * *"
+
+# Auto-grade games daily at 2 AM
+CRON_AUTO_GRADE="0 2 * * *"
+
+
+# =====================================================
+# THIRD-PARTY INTEGRATIONS (OPTIONAL)
+# =====================================================
+
+# Email service (for alerts and notifications)
+# Using SendGrid, Mailgun, or similar
+EMAIL_SERVICE_API_KEY=your-email-service-api-key
+EMAIL_FROM_ADDRESS=noreply@prophetbet.com
+
+# Cloud storage (for backups, exports, etc.)
+# AWS S3, Google Cloud Storage, or similar
+STORAGE_BUCKET_NAME=prophetbet-storage
+STORAGE_ACCESS_KEY=your-storage-access-key
+STORAGE_SECRET_KEY=your-storage-secret-key
+
+
+# =====================================================
+# DEVELOPMENT/DEBUGGING (OPTIONAL)
+# =====================================================
+
+# Enable verbose logging
+VITE_DEBUG_MODE=false
+
+# Enable performance monitoring
+VITE_ENABLE_PERFORMANCE_MONITORING=false
+
+# Sentry DSN (for error tracking)
+VITE_SENTRY_DSN=your-sentry-dsn-here
+
+
+# =====================================================
+# SECURITY (OPTIONAL)
+# =====================================================
+
+# JWT secret (if implementing custom auth)
+JWT_SECRET=your-jwt-secret-here
+
+# API rate limiting (requests per minute)
+API_RATE_LIMIT=100
+
+# CORS allowed origins (comma-separated)
+CORS_ALLOWED_ORIGINS=http://localhost:5173,https://your-production-domain.com
+
+
+# =====================================================
+# DATABASE (AUTO-CONFIGURED BY SUPABASE)
+# =====================================================
+
+# These are typically auto-configured by Supabase
+# You may need them for direct database connections
+
+# Database connection string (for migrations or backups)
+# Found in Supabase Dashboard > Settings > Database
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.your-project-id.supabase.co:5432/postgres
+
+
+# =====================================================
+# ANALYTICS (OPTIONAL)
+# =====================================================
+
+# Google Analytics
+VITE_GA_TRACKING_ID=UA-XXXXXXXXX-X
+
+# Mixpanel
+VITE_MIXPANEL_TOKEN=your-mixpanel-token
+
+
+# =====================================================
+# DEPLOYMENT SPECIFIC (DIGITALOCEAN)
+# =====================================================
+
+# DigitalOcean Spaces (S3-compatible storage)
+DO_SPACES_KEY=your-do-spaces-key
+DO_SPACES_SECRET=your-do-spaces-secret
+DO_SPACES_BUCKET=prophetbet-assets
+DO_SPACES_REGION=nyc3
+
+# DigitalOcean App Platform settings
+DO_APP_NAME=prophetbet
+DO_APP_REGION=nyc
+
+
+# =====================================================
+# NOTES
+# =====================================================
+
+# IMPORTANT SECURITY NOTES:
+# - Never commit the .env file to version control!
+# - Add .env to your .gitignore file
+# - Use different keys for development, staging, and production
+# - Rotate API keys regularly
+# - Keep VITE_SUPABASE_SERVICE_ROLE_KEY secret - only use in server-side code
+
+# VITE PREFIXES:
+# - Variables prefixed with VITE_ are exposed to the frontend
+# - Other variables are only available in backend/Node.js environment
+# - Never prefix sensitive keys (like service role key) with VITE_
+
+# SUPABASE EDGE FUNCTIONS:
+# - Edge Functions have access to environment variables via Deno.env.get()
+# - Set Edge Function secrets via: supabase secrets set KEY=value
+# - Edge Function secrets are separate from frontend env vars

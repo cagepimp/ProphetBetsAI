@@ -1,23 +1,45 @@
-import { base44 } from './base44Client';
+// Migrated to Supabase - Using Edge Functions for integrations
+import { callEdgeFunction } from './supabaseClient';
 
+// Wrapper functions to maintain backward compatibility
+export const InvokeLLM = async (params) => {
+  return await callEdgeFunction('invokeLLM', params);
+};
 
+export const SendEmail = async (params) => {
+  return await callEdgeFunction('sendEmail', params);
+};
 
+export const UploadFile = async (params) => {
+  return await callEdgeFunction('uploadFile', params);
+};
 
-export const Core = base44.integrations.Core;
+export const GenerateImage = async (params) => {
+  return await callEdgeFunction('generateImage', params);
+};
 
-export const InvokeLLM = base44.integrations.Core.InvokeLLM;
+export const ExtractDataFromUploadedFile = async (params) => {
+  return await callEdgeFunction('extractDataFromFile', params);
+};
 
-export const SendEmail = base44.integrations.Core.SendEmail;
+export const CreateFileSignedUrl = async (params) => {
+  return await callEdgeFunction('createFileSignedUrl', params);
+};
 
-export const UploadFile = base44.integrations.Core.UploadFile;
+export const UploadPrivateFile = async (params) => {
+  return await callEdgeFunction('uploadPrivateFile', params);
+};
 
-export const GenerateImage = base44.integrations.Core.GenerateImage;
-
-export const ExtractDataFromUploadedFile = base44.integrations.Core.ExtractDataFromUploadedFile;
-
-export const CreateFileSignedUrl = base44.integrations.Core.CreateFileSignedUrl;
-
-export const UploadPrivateFile = base44.integrations.Core.UploadPrivateFile;
+// Core export for backward compatibility
+export const Core = {
+  InvokeLLM,
+  SendEmail,
+  UploadFile,
+  GenerateImage,
+  ExtractDataFromUploadedFile,
+  CreateFileSignedUrl,
+  UploadPrivateFile
+};
 
 
 

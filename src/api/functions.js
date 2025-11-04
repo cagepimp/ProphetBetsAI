@@ -1,7 +1,7 @@
 // Migrated to Supabase - use callEdgeFunction instead
 import { callEdgeFunction, runAnalyzer, updateSchedule, fetchOdds, autoGradeAndLearn } from './supabaseClient';
 
-// Wrapper to maintain Base44-style function calls
+// Wrapper for edge function calls
 const createFunctionWrapper = (functionName) => {
   return async (params) => {
     return await callEdgeFunction(functionName, params);

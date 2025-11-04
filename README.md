@@ -1,8 +1,8 @@
-# Base44 App
+# ProphetBetAI
 
 
-This app was created automatically by Base44.
-It's a Vite+React app that communicates with the Base44 API.
+ProphetBetAI is an AI-powered sports betting analysis platform.
+It's a Vite+React app that provides real-time odds analysis, injury tracking, and predictive insights across multiple sports.
 
 ## Running the app
 
@@ -17,4 +17,10 @@ npm run dev
 npm run build
 ```
 
-For more information and support, please contact Base44 support at app@base44.com.
+## Features
+
+- Multi-sport odds tracking (NFL, NBA, MLB, CFB, UFC, Golf)
+- AI-powered game analysis and predictions
+- Real-time injury tracking
+- Historical data analysis
+- Automated grading and learning system

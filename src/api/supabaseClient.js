@@ -398,6 +398,21 @@ export async function populateGames(sport, season = null, week = null, forceRefr
 }
 
 /**
+ * Update schedule - Fetch latest schedules from ESPN (alias for populateGames with forceRefresh)
+ * @param {string} sport - Sport type (NFL, NBA, MLB, NHL, CFB, UFC, Golf)
+ * @param {number} season - Season year (optional)
+ * @param {number} week - Week number (optional, for NFL/CFB)
+ * @returns {Promise<Object>} Games created/updated result
+ */
+export async function updateSchedule(sport, season = null, week = null) {
+  if (!sport) {
+    throw new Error('sport is required for updateSchedule')
+  }
+
+  return populateGames(sport, season, week, true)
+}
+
+/**
  * Fetch betting odds from The Odds API
  * @param {string} sport - Sport type
  * @param {Array} markets - Markets to fetch (h2h, spreads, totals)

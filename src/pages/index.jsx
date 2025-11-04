@@ -28,6 +28,8 @@ import CFBPage from "./CFBPage";
 
 import NBAPage from "./NBAPage";
 
+import NHLPage from "./NHLPage";
+
 import MLBPage from "./MLBPage";
 
 import GolfPage from "./GolfPage";
@@ -97,7 +99,9 @@ const PAGES = {
     CFBPage: CFBPage,
     
     NBAPage: NBAPage,
-    
+
+    NHLPage: NHLPage,
+
     MLBPage: MLBPage,
     
     GolfPage: GolfPage,
@@ -188,7 +192,9 @@ function PagesContent() {
                 <Route path="/CFBPage" element={<CFBPage />} />
                 
                 <Route path="/NBAPage" element={<NBAPage />} />
-                
+
+                <Route path="/NHLPage" element={<NHLPage />} />
+
                 <Route path="/MLBPage" element={<MLBPage />} />
                 
                 <Route path="/GolfPage" element={<GolfPage />} />

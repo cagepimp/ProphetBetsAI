@@ -23,6 +23,7 @@ const mainPages = [
   { path: "NFLPage", label: "NFL", icon: Shield },
   { path: "CFBPage", label: "CFB", icon: GraduationCap },
   { path: "NBAPage", label: "NBA", icon: Trophy },
+  { path: "NHLPage", label: "NHL", icon: Shield },
   { path: "MLBPage", label: "MLB", icon: Diamond },
   { path: "UFCPage", label: "UFC", icon: Shield },
   { path: "GolfPage", label: "Golf", icon: Flag },

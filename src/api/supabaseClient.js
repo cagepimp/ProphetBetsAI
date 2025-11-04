@@ -292,4 +292,166 @@ export async function getTeams(filters = {}) {
   return data || []
 }
 
+// ============================================================================
+// SUPABASE EDGE FUNCTIONS
+// ============================================================================
+
+/**
+ * Call a Supabase Edge Function with robust error handling
+ * @param {string} functionName - Name of the Edge Function to invoke
+ * @param {Object} payload - Request payload to send to the function
+ * @param {Object} options - Additional options (timeout, retries, etc.)
+ * @returns {Promise<Object>} Function response data
+ * @throws {Error} If the function call fails after retries
+ */
+export async function callEdgeFunction(functionName, payload = {}, options = {}) {
+  const {
+    timeout = 60000, // 60 second default timeout
+    retries = 0, // No retries by default
+    headers = {}
+  } = options
+
+  let lastError = null
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      if (attempt > 0) {
+        console.log(`🔄 Retrying Edge Function '${functionName}' (attempt ${attempt + 1}/${retries + 1})`)
+      }
+
+      // Create abort controller for timeout
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+      try {
+        const { data, error } = await supabase.functions.invoke(functionName, {
+          body: payload,
+          headers: {
+            'Content-Type': 'application/json',
+            ...headers
+          }
+        })
+
+        clearTimeout(timeoutId)
+
+        if (error) {
+          console.error(`❌ Edge Function '${functionName}' error:`, error)
+          throw new Error(error.message || `Edge Function ${functionName} failed`)
+        }
+
+        // Success
+        console.log(`✅ Edge Function '${functionName}' completed successfully`)
+        return data
+
+      } catch (invokeError) {
+        clearTimeout(timeoutId)
+        throw invokeError
+      }
+
+    } catch (error) {
+      lastError = error
+
+      // Check if it's a timeout error
+      if (error.name === 'AbortError') {
+        console.error(`⏱️ Edge Function '${functionName}' timed out after ${timeout}ms`)
+        lastError = new Error(`Edge Function ${functionName} timed out after ${timeout}ms`)
+      }
+
+      // If this is the last attempt, throw the error
+      if (attempt === retries) {
+        break
+      }
+
+      // Wait before retrying (exponential backoff)
+      const delay = Math.min(1000 * Math.pow(2, attempt), 10000)
+      await new Promise(resolve => setTimeout(resolve, delay))
+    }
+  }
+
+  // All retries failed
+  console.error(`❌ Edge Function '${functionName}' failed after ${retries + 1} attempts:`, lastError)
+  throw lastError
+}
+
+/**
+ * Run analyzer on a game
+ * @param {string} gameId - Game ID
+ * @param {string} sport - Sport type (NFL, NBA, MLB, etc.)
+ * @param {boolean} forceReanalyze - Force re-analysis even if already analyzed
+ * @returns {Promise<Object>} Analysis result
+ */
+export async function runAnalyzer(gameId, sport, forceReanalyze = false) {
+  if (!gameId) {
+    throw new Error('gameId is required for runAnalyzer')
+  }
+  if (!sport) {
+    throw new Error('sport is required for runAnalyzer')
+  }
+
+  return callEdgeFunction('runAnalyzer10000Plus', {
+    gameId,
+    sport,
+    forceReanalyze
+  }, {
+    timeout: 120000, // 2 minutes for analysis
+    retries: 1 // Retry once on failure
+  })
+}
+
+/**
+ * Fetch latest odds from TheOddsAPI
+ * @param {string} sport - Sport type
+ * @param {string} gameId - Optional game ID to fetch odds for specific game
+ * @returns {Promise<Object>} Odds update result
+ */
+export async function fetchOdds(sport, gameId = null) {
+  if (!sport) {
+    throw new Error('sport is required for fetchOdds')
+  }
+
+  return callEdgeFunction('fetchOdds', {
+    sport,
+    gameId
+  }, {
+    timeout: 30000, // 30 seconds
+    retries: 2 // Retry twice for network issues
+  })
+}
+
+/**
+ * Update weekly schedule from ESPN
+ * @param {string} sport - Sport type
+ * @param {number} season - Season year
+ * @param {number} week - Week number (optional)
+ * @returns {Promise<Object>} Schedule update result
+ */
+export async function updateSchedule(sport, season, week = null) {
+  if (!sport) {
+    throw new Error('sport is required for updateSchedule')
+  }
+  if (!season) {
+    throw new Error('season is required for updateSchedule')
+  }
+
+  return callEdgeFunction('updateWeeklySchedule', {
+    sport,
+    season,
+    week
+  }, {
+    timeout: 60000, // 1 minute
+    retries: 1
+  })
+}
+
+/**
+ * Auto-grade completed games and learn from patterns
+ * @returns {Promise<Object>} Grading and learning result
+ */
+export async function autoGradeAndLearn() {
+  return callEdgeFunction('autoGradeAndLearn', {}, {
+    timeout: 180000, // 3 minutes for grading and learning
+    retries: 0 // Don't retry to avoid duplicate processing
+  })
+}
+
 export default supabase

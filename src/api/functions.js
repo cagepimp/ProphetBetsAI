@@ -1,10 +1,19 @@
-// Edge Functions are not yet deployed
-// These functions will be implemented once Edge Functions are set up
+// Supabase Edge Functions - Properly wrapped with error handling
+import { callEdgeFunction } from './supabaseClient';
 
-const createFunctionWrapper = (functionName) => {
-  return async (params) => {
-    console.warn(`⚠️ Edge Function '${functionName}' not yet deployed`);
-    throw new Error(`Edge Functions are not yet deployed. ${functionName} is not available.`);
+/**
+ * Creates a wrapper function for a Supabase Edge Function
+ * @param {string} functionName - Name of the Edge Function
+ * @param {Object} defaultOptions - Default options for timeout, retries, etc.
+ * @returns {Function} Wrapped function that calls the Edge Function
+ */
+const createFunctionWrapper = (functionName, defaultOptions = {}) => {
+  return async (params = {}) => {
+    return await callEdgeFunction(functionName, params, {
+      timeout: 60000, // 60 second default
+      retries: 1, // Retry once by default
+      ...defaultOptions
+    });
   };
 };
 

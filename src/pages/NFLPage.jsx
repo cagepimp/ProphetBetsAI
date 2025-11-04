@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase, getGames, updateSchedule, runAnalyzer } from "@/api/supabaseClient";
+import { supabase, getGames } from "@/api/supabaseClient";
 import { Loader2, RefreshCw, AlertCircle, Brain, Users, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -76,21 +76,12 @@ export default function NFLPage() {
   const handleRefreshGames = async () => {
     setIsRefreshing(true);
     try {
-      console.log('🔄 Fetching latest NFL games from ESPN...');
-      const currentYear = new Date().getFullYear();
-      const response = await updateSchedule('NFL', currentYear);
-
-      if (response?.success || response?.gamesCreated || response?.gamesUpdated) {
-        const created = response.gamesCreated || 0;
-        const updated = response.gamesUpdated || 0;
-        alert(`✅ NFL Schedule Updated!\n\nGames Created: ${created}\nGames Updated: ${updated}`);
-      }
-
       // Reload games from database
       await fetchData();
+      alert('✅ NFL games reloaded from database!\n\nNote: Schedule updates require backend Edge Functions (coming soon)');
     } catch (err) {
-      console.error('❌ Schedule update failed:', err);
-      alert(`❌ Failed to update schedule: ${err.message}`);
+      console.error('❌ Reload failed:', err);
+      alert(`❌ Failed to reload: ${err.message}`);
     } finally {
       setIsRefreshing(false);
     }
@@ -99,54 +90,8 @@ export default function NFLPage() {
   const handleAnalyzeGame = async (game) => {
     if (!game || !game.id) return;
     const gameId = game.id;
-    setAnalyzingGames(prev => ({ ...prev, [gameId]: true }));
 
-    try {
-      console.log('🧠 Analyzing game:', gameId);
-      const response = await runAnalyzer(gameId, 'NFL', false);
-
-      if (response?.success) {
-        const fullResult = response.prediction || response.data || response;
-
-        // Filter props by confidence (55% - 100% only)
-        const filterByConfidence = (props) => {
-          if (!Array.isArray(props)) return [];
-          return props.filter(prop => {
-            const confidence = prop.confidence || prop.confidence_score || 0;
-            const confidenceValue = confidence > 1 ? confidence : confidence * 100;
-            return confidenceValue >= 55;
-          });
-        };
-
-        const completeData = {
-          the_edge: fullResult.analysis?.the_edge || fullResult.the_edge,
-          weather_impact: fullResult.analysis?.weather_impact,
-          score_prediction: fullResult.analysis?.score_prediction,
-          predictions: fullResult.analysis?.predictions || fullResult.predictions,
-          recommended_bets: fullResult.analysis?.recommended_bets || fullResult.recommended_bets || [],
-          key_trends: fullResult.analysis?.key_trends || [],
-          analyzed_at: fullResult.analysis?.analyzed_at || fullResult.analyzed_at,
-          top_player_props_draftkings: filterByConfidence(fullResult.top_player_props_draftkings || []),
-          top_player_props_fanduel: filterByConfidence(fullResult.top_player_props_fanduel || []),
-          top_team_props_draftkings: filterByConfidence(fullResult.top_team_props_draftkings || []),
-          top_team_props_fanduel: filterByConfidence(fullResult.top_team_props_fanduel || [])
-        };
-
-        setAnalysisResults(prev => ({
-          ...prev,
-          [gameId]: { data: completeData }
-        }));
-
-        console.log('✅ Analysis complete:', gameId);
-      } else {
-        throw new Error(response?.error || 'Analysis failed - no results returned');
-      }
-    } catch (err) {
-      console.error('❌ Analysis failed:', err);
-      alert(`❌ Analysis failed: ${err.message}`);
-    } finally {
-      setAnalyzingGames(prev => ({ ...prev, [gameId]: false }));
-    }
+    alert('⚠️ Game analysis requires backend Edge Functions that are not yet implemented.\n\nFor now, you can view existing game data from the database.');
   };
 
   const formatOdds = (odds) => {

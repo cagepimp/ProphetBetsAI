@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { getGames } from "@/api/supabaseClient";
-import { runAnalyzerPropsV3 } from "@/api/functions";
 import GameCard from "@/components/sports/GameCard";
 import { Loader2 } from "lucide-react";
 
@@ -65,80 +64,7 @@ export default function GolfPage() {
   }, []);
 
   const handleAnalyzeGame = async (game, analysisType = 'game') => {
-    try {
-      console.log(`🧠 Analyzing tournament:`, game.id);
-      const analysisKey = `${game.id}_${analysisType}`;
-      setAnalysisResults(prev => ({ ...prev, [analysisKey]: { loading: true } }));
-
-      let response;
-
-      if (analysisType === 'player_props') {
-        response = await runAnalyzerPropsV3({
-          sport: sport,
-          gameId: game.id,
-          analysisType: 'player'
-        });
-      } else if (analysisType === 'team_props') {
-        response = await runAnalyzerPropsV3({
-          sport: sport,
-          gameId: game.id,
-          analysisType: 'team'
-        });
-      } else {
-        response = await runAnalyzer(game.id, sport, false);
-      }
-
-      const data = response?.data || response;
-      console.log(`✅ ${analysisType} analysis result:`, data);
-
-      if (data?.success && data?.results && data.results.length > 0) {
-        const fullResult = data.results[0];
-
-        // Filter props by confidence (55% - 100% only)
-        const filterByConfidence = (props) => {
-          if (!Array.isArray(props)) return [];
-          return props.filter(prop => {
-            const confidence = prop.confidence || prop.confidence_score || 0;
-            // Handle both percentage (55-100) and decimal (0.55-1.0) formats
-            const confidenceValue = confidence > 1 ? confidence : confidence * 100;
-            return confidenceValue >= 55;
-          });
-        };
-
-        const completeData = {
-          ...fullResult.analysis,
-          // Props from top level - FILTERED by 55%+ confidence
-          top_player_props_draftkings: filterByConfidence(fullResult.top_player_props_draftkings || []),
-          top_player_props_fanduel: filterByConfidence(fullResult.top_player_props_fanduel || []),
-          top_team_props_draftkings: filterByConfidence(fullResult.top_team_props_draftkings || []),
-          top_team_props_fanduel: filterByConfidence(fullResult.top_team_props_fanduel || [])
-        };
-
-        setAnalysisResults(prev => ({
-          ...prev,
-          [analysisKey]: {
-            loading: false,
-            data: completeData,
-            type: analysisType
-          }
-        }));
-
-        console.log('✅ Analysis saved:', analysisKey, completeData);
-      } else {
-        throw new Error(data?.error || data?.message || 'Analysis failed');
-      }
-    } catch (err) {
-      console.error(`❌ ${analysisType} analysis error:`, err);
-      const analysisKey = `${game.id}_${analysisType}`;
-      setAnalysisResults(prev => ({
-        ...prev,
-        [analysisKey]: {
-          loading: false,
-          error: err.message
-        }
-      }));
-      alert(`❌ Analysis failed: ${err.message}`);
-    }
+    alert('⚠️ Tournament analysis requires backend Edge Functions that are not yet implemented.\n\nFor now, you can view existing tournament data from the database.');
   };
 
   return (

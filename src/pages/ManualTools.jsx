@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { callEdgeFunction } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
 import { FileText } from 'lucide-react';
 
@@ -39,27 +38,8 @@ export default function ManualTools() {
   };
 
   const handleAnalyzeGame = async (game) => {
-    setAnalyzing(true);
-    
-    try {
-      console.log('🎯 Analyzing game:', game.id);
-      
-      const result = await callEdgeFunction('analyzerV3', {
-        sport: game.sport,
-        gameId: game.id
-      });
-      
-      console.log('✅ Analysis complete:', result);
-      alert(`Analysis complete! Confidence: ${result.confidence || 'N/A'}%`);
-      
-      await handleSearch();
-      
-    } catch (error) {
-      console.error('❌ Analysis failed:', error);
-      alert(`Analysis error: ${error.message}`);
-    } finally {
-      setAnalyzing(false);
-    }
+    // Edge Functions not implemented yet
+    alert('⚠️ Analysis feature coming soon! Edge Functions are not yet deployed.');
   };
 
   const handleEnterScore = async () => {

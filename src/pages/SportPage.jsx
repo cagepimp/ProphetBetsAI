@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { getGames, runAnalyzer } from "@/api/supabaseClient";
-import { runAnalyzerPropsV3 } from "@/api/functions";
+import { getGames } from "@/api/supabaseClient";
 import { Loader2 } from "lucide-react";
 import GameCard from "@/components/sports/GameCard";
 
@@ -89,116 +88,9 @@ export default function SportPage() {
     fetchGames();
   }, [sport]);
 
-  // EXACT copy from working Home.jsx
   const handleAnalyzeGame = async (game, analysisType = 'game') => {
-    try {
-      console.log(`🧠 Analyzing ${analysisType} for game:`, game.id);
-      const analysisKey = `${game.id}_${analysisType}`;
-      setAnalysisResults(prev => ({ ...prev, [analysisKey]: { loading: true } }));
-
-      // Fetch injury data for this game
-      let injuryData = [];
-      try {
-        const { fetchInjuries } = await import('@/api/functions');
-        const injResponse = await fetchInjuries({ sport });
-        if (injResponse?.data?.injuries) {
-          const homeTeam = game.home_team || game.home || '';
-          const awayTeam = game.away_team || game.away || '';
-
-          injuryData = injResponse.data.injuries.filter(inj => {
-            const teamAbbr = inj.team_abbr?.toLowerCase() || '';
-            const home = homeTeam?.toLowerCase() || '';
-            const away = awayTeam?.toLowerCase() || '';
-
-            return (
-              home.includes(teamAbbr) ||
-              away.includes(teamAbbr) ||
-              teamAbbr.includes(home.split(' ').pop()) ||
-              teamAbbr.includes(away.split(' ').pop())
-            );
-          });
-        }
-      } catch (injError) {
-        console.warn('Could not fetch injury data:', injError);
-      }
-
-      let response;
-
-      if (analysisType === 'player_props') {
-        response = await runAnalyzerPropsV3({
-          sport: sport,
-          gameId: game.id,
-          analysisType: 'player'
-        });
-      } else if (analysisType === 'team_props') {
-        response = await runAnalyzerPropsV3({
-          sport: sport,
-          gameId: game.id,
-          analysisType: 'team'
-        });
-      } else {
-        response = await runAnalyzer(game.id, sport, false);
-      }
-
-      console.log(`✅ ${analysisType} analysis result:`, response);
-
-      if (response?.success) {
-        const fullResult = response.prediction;
-
-        // Filter props by confidence (55% - 100% only)
-        const filterByConfidence = (props) => {
-          if (!Array.isArray(props)) return [];
-          return props.filter(prop => {
-            const confidence = prop.confidence || prop.confidence_score || 0;
-            // Handle both percentage (55-100) and decimal (0.55-1.0) formats
-            const confidenceValue = confidence > 1 ? confidence : confidence * 100;
-            return confidenceValue >= 55;
-          });
-        };
-
-        const completeData = {
-          // Analysis fields
-          the_edge: fullResult.analysis?.the_edge,
-          weather_impact: fullResult.analysis?.weather_impact,
-          score_prediction: fullResult.analysis?.score_prediction,
-          predictions: fullResult.analysis?.predictions,
-          recommended_bets: fullResult.analysis?.recommended_bets || [],
-          key_trends: fullResult.analysis?.key_trends || [],
-          analyzed_at: fullResult.analysis?.analyzed_at || fullResult.analyzed_at,
-
-          // Props from top level - FILTERED by 55%+ confidence
-          top_player_props_draftkings: filterByConfidence(fullResult.top_player_props_draftkings || []),
-          top_player_props_fanduel: filterByConfidence(fullResult.top_player_props_fanduel || []),
-          top_team_props_draftkings: filterByConfidence(fullResult.top_team_props_draftkings || []),
-          top_team_props_fanduel: filterByConfidence(fullResult.top_team_props_fanduel || [])
-        };
-
-        setAnalysisResults(prev => ({
-          ...prev,
-          [analysisKey]: {
-            loading: false,
-            data: completeData,
-            type: analysisType
-          }
-        }));
-
-        // Force the card to show the analysis
-        console.log('✅ Analysis saved:', analysisKey, completeData);
-      } else {
-        throw new Error(data?.error || data?.message || 'Analysis failed - no results returned');
-      }
-    } catch (error) {
-      console.error(`❌ ${analysisType} analysis error:`, error);
-      const analysisKey = `${game.id}_${analysisType}`;
-      setAnalysisResults(prev => ({
-        ...prev,
-        [analysisKey]: {
-          loading: false,
-          error: error.message
-        }
-      }));
-      alert(`❌ Analysis failed: ${error.message}`);
-    }
+    // Edge Functions not implemented yet
+    alert('⚠️ Analysis feature coming soon! Edge Functions are not yet deployed.');
   };
 
   // Sport-specific display configurations

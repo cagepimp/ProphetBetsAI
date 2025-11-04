@@ -1,33 +1,37 @@
-// Migrated to Supabase - Using Edge Functions for integrations
-import { callEdgeFunction } from './supabaseClient';
+// Edge Functions are not yet deployed
+// These integrations will be implemented once Edge Functions are set up
+
+const notImplemented = (functionName) => {
+  throw new Error(`Edge Functions are not yet deployed. ${functionName} is not available.`);
+};
 
 // Wrapper functions to maintain backward compatibility
 export const InvokeLLM = async (params) => {
-  return await callEdgeFunction('invokeLLM', params);
+  notImplemented('invokeLLM');
 };
 
 export const SendEmail = async (params) => {
-  return await callEdgeFunction('sendEmail', params);
+  notImplemented('sendEmail');
 };
 
 export const UploadFile = async (params) => {
-  return await callEdgeFunction('uploadFile', params);
+  notImplemented('uploadFile');
 };
 
 export const GenerateImage = async (params) => {
-  return await callEdgeFunction('generateImage', params);
+  notImplemented('generateImage');
 };
 
 export const ExtractDataFromUploadedFile = async (params) => {
-  return await callEdgeFunction('extractDataFromFile', params);
+  notImplemented('extractDataFromFile');
 };
 
 export const CreateFileSignedUrl = async (params) => {
-  return await callEdgeFunction('createFileSignedUrl', params);
+  notImplemented('createFileSignedUrl');
 };
 
 export const UploadPrivateFile = async (params) => {
-  return await callEdgeFunction('uploadPrivateFile', params);
+  notImplemented('uploadPrivateFile');
 };
 
 // Core export for backward compatibility

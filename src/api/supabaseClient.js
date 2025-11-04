@@ -272,78 +272,24 @@ export async function getLineHistory(filters = {}) {
 }
 
 /**
- * Call Supabase Edge Function
- * @param {string} functionName - Name of the Edge Function
- * @param {Object} payload - Request payload
- * @returns {Promise<Object>} Function response
+ * Fetch teams with filters
+ * @param {Object} filters - Query filters
+ * @returns {Promise<Array>} Teams array
  */
-export async function callEdgeFunction(functionName, payload = {}) {
-  try {
-    const { data, error } = await supabase.functions.invoke(functionName, {
-      body: payload
-    })
+export async function getTeams(filters = {}) {
+  let query = supabase.from('teams').select('*')
 
-    if (error) {
-      console.error(`Edge function ${functionName} error:`, error)
-      throw error
-    }
+  if (filters.sport) query = query.eq('sport', filters.sport)
+  if (filters.name) query = query.ilike('name', `%${filters.name}%`)
 
-    return data
-  } catch (err) {
-    console.error(`Failed to call edge function ${functionName}:`, err)
-    throw err
+  const { data, error } = await query
+
+  if (error) {
+    console.error('Error fetching teams:', error)
+    return []
   }
-}
 
-/**
- * Run analyzer on a game
- * @param {string} gameId - Game ID
- * @param {string} sport - Sport type
- * @param {boolean} forceReanalyze - Force re-analysis
- * @returns {Promise<Object>} Analysis result
- */
-export async function runAnalyzer(gameId, sport, forceReanalyze = false) {
-  return callEdgeFunction('runAnalyzer10000Plus', {
-    gameId,
-    sport,
-    forceReanalyze
-  })
-}
-
-/**
- * Fetch latest odds from TheOddsAPI
- * @param {string} sport - Sport type
- * @param {string} gameId - Optional game ID
- * @returns {Promise<Object>} Odds update result
- */
-export async function fetchOdds(sport, gameId = null) {
-  return callEdgeFunction('fetchOdds', {
-    sport,
-    gameId
-  })
-}
-
-/**
- * Update weekly schedule from ESPN
- * @param {string} sport - Sport type
- * @param {number} season - Season year
- * @param {number} week - Week number
- * @returns {Promise<Object>} Schedule update result
- */
-export async function updateSchedule(sport, season, week = null) {
-  return callEdgeFunction('updateWeeklySchedule', {
-    sport,
-    season,
-    week
-  })
-}
-
-/**
- * Auto-grade completed games and learn patterns
- * @returns {Promise<Object>} Grading result
- */
-export async function autoGradeAndLearn() {
-  return callEdgeFunction('autoGradeAndLearn', {})
+  return data || []
 }
 
 export default supabase

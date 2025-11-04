@@ -1,10 +1,10 @@
-// Migrated to Supabase - use callEdgeFunction instead
-import { callEdgeFunction, runAnalyzer, updateSchedule, fetchOdds, autoGradeAndLearn } from './supabaseClient';
+// Edge Functions are not yet deployed
+// These functions will be implemented once Edge Functions are set up
 
-// Wrapper for edge function calls
 const createFunctionWrapper = (functionName) => {
   return async (params) => {
-    return await callEdgeFunction(functionName, params);
+    console.warn(`⚠️ Edge Function '${functionName}' not yet deployed`);
+    throw new Error(`Edge Functions are not yet deployed. ${functionName} is not available.`);
   };
 };
 

@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { supabase, getGames, updateSchedule, runAnalyzer } from "@/api/supabaseClient";
+import { supabase, getGames } from "@/api/supabaseClient";
 import { Loader2, RefreshCw, AlertCircle, Brain, Users, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getMLBTeamLogo, getMLBTeamCode } from "@/components/data/MLB_TEAMS";
@@ -32,68 +32,17 @@ export default function MLBPage() {
   const handleRefreshGames = async () => {
     setIsRefreshing(true);
     try {
-      const currentYear = new Date().getFullYear();
-      const response = await updateSchedule('MLB', currentYear);
-      if (response?.success) {
-        alert(` ${response.gamesCreated + response.gamesUpdated} MLB games loaded!`);
-        await fetchData();
-      }
+      await fetchData();
     } catch (err) {
-      alert(` Failed: ${err.message}`);
+      alert(`❌ Failed: ${err.message}`);
     } finally {
       setIsRefreshing(false);
     }
   };
 
   const handleAnalyzeGame = async (game) => {
-    if (!game || !game.id) return;
-    const gameId = game.id;
-    setAnalyzingGames(prev => ({ ...prev, [gameId]: true }));
-    
-    try {
-      const response = await runAnalyzer(gameId, 'MLB', false);
-
-      if (response?.success) {
-        const fullResult = response.prediction;
-
-        // Filter props by confidence (55% - 100% only)
-        const filterByConfidence = (props) => {
-          if (!Array.isArray(props)) return [];
-          return props.filter(prop => {
-            const confidence = prop.confidence || prop.confidence_score || 0;
-            // Handle both percentage (55-100) and decimal (0.55-1.0) formats
-            const confidenceValue = confidence > 1 ? confidence : confidence * 100;
-            return confidenceValue >= 55;
-          });
-        };
-
-        const completeData = {
-          // Analysis fields
-          the_edge: fullResult.analysis?.the_edge,
-          weather_impact: fullResult.analysis?.weather_impact,
-          score_prediction: fullResult.analysis?.score_prediction,
-          predictions: fullResult.analysis?.predictions,
-          recommended_bets: fullResult.analysis?.recommended_bets || [],
-          key_trends: fullResult.analysis?.key_trends || [],
-          analyzed_at: fullResult.analysis?.analyzed_at || fullResult.analyzed_at,
-
-          // Props from top level - FILTERED by 55%+ confidence
-          top_player_props_draftkings: filterByConfidence(fullResult.top_player_props_draftkings || []),
-          top_player_props_fanduel: filterByConfidence(fullResult.top_player_props_fanduel || []),
-          top_team_props_draftkings: filterByConfidence(fullResult.top_team_props_draftkings || []),
-          top_team_props_fanduel: filterByConfidence(fullResult.top_team_props_fanduel || [])
-        };
-
-        setAnalysisResults(prev => ({
-          ...prev,
-          [gameId]: { data: completeData }
-        }));
-      }
-    } catch (err) {
-      alert(`Analysis failed: ${err.message}`);
-    } finally {
-      setAnalyzingGames(prev => ({ ...prev, [gameId]: false }));
-    }
+    // Edge Functions not implemented yet
+    alert('⚠️ Analysis feature coming soon! Edge Functions are not yet deployed.');
   };
 
   const formatOdds = (odds) => {

@@ -2,7 +2,7 @@
 // Matches NFL layout exactly with team logos
 
 import React, { useState, useEffect } from 'react';
-import { getGames, updateSchedule, runAnalyzer } from '@/api/supabaseClient';
+import { getGames } from '@/api/supabaseClient';
 import { Trophy, RefreshCw } from 'lucide-react';
 import { NBA_TEAMS, getNBATeamLogo, getNBATeamCode } from '@/components/data/NBA_TEAMS';
 
@@ -141,55 +141,8 @@ function NBAGameCard({ game }) {
   }) : 'TBD';
 
   const handleAnalyzeGame = async (game) => {
-    if (!game || !game.id) return;
-    const gameId = game.id;
-    setAnalyzingGames(prev => ({ ...prev, [gameId]: true }));
-
-    try {
-      const response = await runAnalyzer(gameId, 'NBA', false);
-
-      const data = response?.data || response;
-      if (data?.success && data?.results?.[0]) {
-        const fullResult = data.results[0];
-
-        // Filter props by confidence (55% - 100% only)
-        const filterByConfidence = (props) => {
-          if (!Array.isArray(props)) return [];
-          return props.filter(prop => {
-            const confidence = prop.confidence || prop.confidence_score || 0;
-            // Handle both percentage (55-100) and decimal (0.55-1.0) formats
-            const confidenceValue = confidence > 1 ? confidence : confidence * 100;
-            return confidenceValue >= 55;
-          });
-        };
-
-        const completeData = {
-          // Analysis fields
-          the_edge: fullResult.analysis?.the_edge,
-          weather_impact: fullResult.analysis?.weather_impact,
-          score_prediction: fullResult.analysis?.score_prediction,
-          predictions: fullResult.analysis?.predictions,
-          recommended_bets: fullResult.analysis?.recommended_bets || [],
-          key_trends: fullResult.analysis?.key_trends || [],
-          analyzed_at: fullResult.analysis?.analyzed_at || fullResult.analyzed_at,
-
-          // Props from top level - FILTERED by 55%+ confidence
-          top_player_props_draftkings: filterByConfidence(fullResult.top_player_props_draftkings || []),
-          top_player_props_fanduel: filterByConfidence(fullResult.top_player_props_fanduel || []),
-          top_team_props_draftkings: filterByConfidence(fullResult.top_team_props_draftkings || []),
-          top_team_props_fanduel: filterByConfidence(fullResult.top_team_props_fanduel || [])
-        };
-
-        setAnalysisResults(prev => ({
-          ...prev,
-          [gameId]: { data: completeData }
-        }));
-      }
-    } catch (err) {
-      alert(`Analysis failed: ${err.message}`);
-    } finally {
-      setAnalyzingGames(prev => ({ ...prev, [gameId]: false }));
-    }
+    // Edge Functions not implemented yet
+    alert('⚠️ Analysis feature coming soon! Edge Functions are not yet deployed.');
   };
 
   const gameId = game.id;

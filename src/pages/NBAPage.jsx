@@ -2,7 +2,7 @@
 // Matches NFL layout exactly with team logos
 
 import React, { useState, useEffect } from 'react';
-import { getGames } from '@/api/supabaseClient';
+import { getGames, populateGames, fetchOdds, fetchInjuries } from '@/api/supabaseClient';
 import { Trophy, RefreshCw } from 'lucide-react';
 import { NBA_TEAMS, getNBATeamLogo, getNBATeamCode } from '@/components/data/NBA_TEAMS';
 
@@ -33,11 +33,33 @@ export default function NBAPage() {
   const handleRefresh = async () => {
     setRefreshing(true);
     try {
+      console.log('🔄 Starting NBA schedule refresh...');
+
+      // Step 1: Populate games from ESPN
+      const populateResult = await populateGames('NBA', null, null, true);
+      console.log('✅ Populate result:', populateResult);
+
+      // Step 2: Fetch betting odds
+      const oddsResult = await fetchOdds('NBA');
+      console.log('✅ Odds result:', oddsResult);
+
+      // Step 3: Fetch injury reports
+      const injuriesResult = await fetchInjuries('NBA');
+      console.log('✅ Injuries result:', injuriesResult);
+
+      // Step 4: Reload games from database
       await loadGames();
-      alert('✅ NBA games reloaded from database!\n\nNote: Schedule updates require backend Edge Functions (coming soon)');
+
+      // Success message
+      alert(`✅ NBA Data Refreshed Successfully!
+
+📅 Games: ${populateResult.gamesCreated} created, ${populateResult.gamesUpdated} updated
+💰 Odds: ${oddsResult.oddsUpdated} updated
+🏥 Injuries: ${injuriesResult.injuriesCreated + injuriesResult.injuriesUpdated} updated`);
+
     } catch (err) {
-      console.error('❌ Reload failed:', err);
-      alert(`❌ Failed to reload: ${err.message}`);
+      console.error('❌ Refresh failed:', err);
+      alert(`❌ Refresh Failed: ${err.message}\n\nCheck console for details.`);
     } finally {
       setRefreshing(false);
     }

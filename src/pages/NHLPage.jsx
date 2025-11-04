@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getGames } from "@/api/supabaseClient";
+import { getGames, populateGames, fetchOdds, fetchInjuries } from "@/api/supabaseClient";
 import { Loader2, RefreshCw, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -75,10 +75,33 @@ export default function NHLPage() {
   const handleRefreshGames = async () => {
     setIsRefreshing(true);
     try {
+      console.log('🔄 Starting NHL schedule refresh...');
+
+      // Step 1: Populate games from ESPN
+      const populateResult = await populateGames('NHL', null, null, true);
+      console.log('✅ Populate result:', populateResult);
+
+      // Step 2: Fetch betting odds
+      const oddsResult = await fetchOdds('NHL');
+      console.log('✅ Odds result:', oddsResult);
+
+      // Step 3: Fetch injury reports
+      const injuriesResult = await fetchInjuries('NHL');
+      console.log('✅ Injuries result:', injuriesResult);
+
+      // Step 4: Reload games from database
       await fetchData();
-      alert('✅ NHL games reloaded from database!\n\nNote: Schedule updates require backend Edge Functions (coming soon)');
+
+      // Success message
+      alert(`✅ NHL Data Refreshed Successfully!
+
+📅 Games: ${populateResult.gamesCreated} created, ${populateResult.gamesUpdated} updated
+💰 Odds: ${oddsResult.oddsUpdated} updated
+🏥 Injuries: ${injuriesResult.injuriesCreated + injuriesResult.injuriesUpdated} updated`);
+
     } catch (err) {
-      alert(`❌ Failed: ${err.message}`);
+      console.error('❌ Refresh failed:', err);
+      alert(`❌ Refresh Failed: ${err.message}\n\nCheck console for details.`);
     } finally {
       setIsRefreshing(false);
     }

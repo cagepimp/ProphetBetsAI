@@ -24,3 +24,11 @@ dist-ssr
 *.sw?
 
 .env
+
+# Local test scripts
+check-functions.mjs
+test-edge-functions.js
+verify-deployment.mjs
+
+# Supabase temp files
+supabase/.temp/

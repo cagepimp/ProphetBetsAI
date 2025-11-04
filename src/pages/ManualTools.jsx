@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { callEdgeFunction, updateSchedule, runAnalyzer, fetchOdds, autoGradeAndLearn } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
-import { FileText } from 'lucide-react';
+import { FileText, RefreshCw, Brain, TrendingUp, Award } from 'lucide-react';
 
 export default function ManualTools() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -38,8 +39,29 @@ export default function ManualTools() {
   };
 
   const handleAnalyzeGame = async (game) => {
-    // Edge Functions not implemented yet
-    alert('⚠️ Analysis feature coming soon! Edge Functions are not yet deployed.');
+    setAnalyzing(true);
+
+    try {
+      console.log('🎯 Analyzing game:', game.id);
+
+      const result = await runAnalyzer(game.id, game.sport, false);
+
+      console.log('✅ Analysis complete:', result);
+
+      if (result?.success) {
+        alert(`✅ Analysis complete!\n\nConfidence: ${result.confidence || 'N/A'}%\nPrediction: ${result.prediction?.winner || 'N/A'}`);
+      } else {
+        alert(`Analysis completed but check console for details`);
+      }
+
+      await handleSearch();
+
+    } catch (error) {
+      console.error('❌ Analysis failed:', error);
+      alert(`❌ Analysis error: ${error.message}`);
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const handleEnterScore = async () => {

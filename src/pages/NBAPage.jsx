@@ -2,7 +2,7 @@
 // Matches NFL layout exactly with team logos
 
 import React, { useState, useEffect } from 'react';
-import { getGames } from '@/api/supabaseClient';
+import { getGames, updateSchedule, runAnalyzer } from '@/api/supabaseClient';
 import { Trophy, RefreshCw } from 'lucide-react';
 import { NBA_TEAMS, getNBATeamLogo, getNBATeamCode } from '@/components/data/NBA_TEAMS';
 
@@ -32,8 +32,24 @@ export default function NBAPage() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await loadGames();
-    setRefreshing(false);
+    try {
+      console.log('🔄 Fetching latest NBA games...');
+      const currentYear = new Date().getFullYear();
+      const response = await updateSchedule('NBA', currentYear);
+
+      if (response?.success || response?.gamesCreated || response?.gamesUpdated) {
+        const created = response.gamesCreated || 0;
+        const updated = response.gamesUpdated || 0;
+        alert(`✅ NBA Schedule Updated!\n\nGames Created: ${created}\nGames Updated: ${updated}`);
+      }
+
+      await loadGames();
+    } catch (err) {
+      console.error('❌ Schedule update failed:', err);
+      alert(`❌ Failed to update schedule: ${err.message}`);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   if (loading) {

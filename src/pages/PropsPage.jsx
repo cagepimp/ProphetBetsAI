@@ -92,11 +92,11 @@ export default function PropsPage() {
         try {
             console.log("🔵 Loading props from Supabase...");
 
-            // Load props from Supabase
+            // Load props directly from Supabase database
             const rawProps = await getPlayerProps({ sport: selectedSport });
 
-                console.log("🟢 Props received:", rawProps);
-                const data = rawProps;
+            console.log("🟢 Props received:", rawProps);
+            const data = rawProps;
                 
                 // Normalize data
                 const propsArray = Array.isArray(data) ? data : [];
@@ -144,21 +144,15 @@ export default function PropsPage() {
         setError(null);
 
         try {
-            console.log(`🎯 Starting bulk props analysis for ${selectedSport}...`);
+            console.log(`🎯 Loading props for ${selectedSport}...`);
 
-            // Call Supabase Edge Function for bulk analysis
-            const response = await callEdgeFunction('runBulkPropsAnalyzer', {
-                sport: selectedSport,
-                limit: 20
-            });
-
-            console.log("✅ Bulk analysis complete:", response);
-
-            // Reload props
+            // Just reload props from database - no analysis for now
             await loadProps();
 
+            alert(`✅ Loaded ${selectedSport} props from database`);
+
         } catch (err) {
-            console.error("❌ Failed to analyze props:", err);
+            console.error("❌ Failed to load props:", err);
             setError(err.message);
         } finally {
             setAnalyzing(false);

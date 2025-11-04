@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Loader2, Users, TrendingUp, ChevronDown, Filter } from "lucide-react";
-import { callEdgeFunction } from '@/api/supabaseClient';
+import { getPlayerProps } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
 
 const SPORT_CONFIG = {
@@ -89,36 +89,16 @@ export default function PropsPage() {
         const loadProps = async () => {
             setLoading(true);
             setError(null);
-            
+
             try {
-                console.log("🔵 Starting to load props...");
-                
-                const response = await callEdgeFunction('runAnalyzerProps');
-                
-                console.log("🟢 Response received:", response);
-                const data = response?.data;
-                
-                // DEBUG: Log the actual response structure
-                console.log("🟢 Response.data structure:", JSON.stringify(data, null, 2));
-                console.log("🟢 data.success:", data?.success);
-                console.log("🟢 data.top_props:", data?.top_props);
-                console.log("🟢 data.top_props length:", data?.top_props?.length);
-                console.log("🟢 data.message:", data?.message);
-                console.log("🟢 data.debug:", data?.debug);
-                
-                let rawProps = [];
-                
-                if (data && data.success && Array.isArray(data.top_props)) {
-                    rawProps = data.top_props;
-                } else if (Array.isArray(data)) {
-                    rawProps = data;
-                } else if (data && data.props) {
-                    rawProps = Array.isArray(data.props) ? data.props : [];
-                } else if (data && data.data) {
-                    rawProps = Array.isArray(data.data) ? data.data : [];
-                }
-                
-                const normalized = rawProps
+                console.log("🔵 Loading props from database...");
+
+                // Load props directly from Supabase
+                const rawProps = await getPlayerProps({});
+
+                console.log("🟢 Props received:", rawProps);
+
+                const normalized = (Array.isArray(rawProps) ? rawProps : [])
                     .filter(p => p && typeof p === 'object')
                     .map(p => {
                         const market = p.market || p.prop_type || p.Market || p.bet_type || 'Unknown Market';

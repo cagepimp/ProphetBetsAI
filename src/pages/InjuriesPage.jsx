@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { callEdgeFunction } from '@/api/supabaseClient';
+import { getInjuries } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -104,25 +104,19 @@ export default function InjuriesPage() {
     setLoading(true);
     setError(null);
     try {
-      console.log(`🏥 Loading ${activeSport} injuries...`);
-      
-      // Call fetchInjuries function via Base44
-      const response = await callEdgeFunction('fetchInjuries', { 
-        sport: activeSport 
+      console.log(`🏥 Loading ${activeSport} injuries from database...`);
+
+      // Query injuries directly from Supabase
+      const injuriesData = await getInjuries({
+        sport: activeSport
       });
-      
-      console.log(`${activeSport} injury response:`, response);
-      
-      const data = response?.data || response;
-      
-      if (data?.injuries && Array.isArray(data.injuries)) {
-        setInjuries(data.injuries);
+
+      console.log(`${activeSport} injuries:`, injuriesData);
+
+      if (injuriesData && Array.isArray(injuriesData) && injuriesData.length > 0) {
+        setInjuries(injuriesData);
         setLastUpdated(new Date());
-        console.log(`✅ Loaded ${data.injuries.length} ${activeSport} injuries`);
-      } else if (data?.data?.injuries && Array.isArray(data.data.injuries)) {
-        setInjuries(data.data.injuries);
-        setLastUpdated(new Date());
-        console.log(`✅ Loaded ${data.data.injuries.length} ${activeSport} injuries`);
+        console.log(`✅ Loaded ${injuriesData.length} ${activeSport} injuries`);
       } else {
         setInjuries([]);
         setError(`No injury data available for ${activeSport}`);
@@ -136,43 +130,39 @@ export default function InjuriesPage() {
     }
   };
 
-  // Fetch ALL sports injuries
+  // Load ALL sports injuries from database
   const fetchAllSportsInjuries = async () => {
     setFetchingAll(true);
     setError(null);
-    
+
     try {
-      console.log(`🏥 Fetching injuries for ALL sports...`);
-      
+      console.log(`🏥 Loading injuries for ALL sports from database...`);
+
       let totalFetched = 0;
-      
+
       for (const sport of sports) {
         try {
-          console.log(`   Fetching ${sport}...`);
-          const response = await callEdgeFunction('fetchInjuries', { 
-            sport: sport 
+          console.log(`   Loading ${sport}...`);
+          const injuriesData = await getInjuries({
+            sport: sport
           });
-          
-          const data = response?.data || response;
-          const count = data?.injuries?.length || data?.data?.injuries?.length || 0;
+
+          const count = injuriesData?.length || 0;
           totalFetched += count;
-          
+
           console.log(`   ✅ ${sport}: ${count} injuries`);
-          
-          // Small delay to avoid rate limits
-          await new Promise(resolve => setTimeout(resolve, 1000));
         } catch (sportError) {
           console.error(`   ❌ ${sport} failed:`, sportError.message);
         }
       }
-      
-      alert(`✅ Fetched injuries for all sports!\nTotal: ${totalFetched} injuries across ${sports.length} sports`);
-      
+
+      alert(`✅ Loaded injuries for all sports!\nTotal: ${totalFetched} injuries across ${sports.length} sports`);
+
       // Reload current sport
       await loadInjuries();
-      
+
     } catch (err) {
-      console.error("❌ Error fetching all sports:", err);
+      console.error("❌ Error loading all sports:", err);
       alert(`❌ Error: ${err.message}`);
     } finally {
       setFetchingAll(false);

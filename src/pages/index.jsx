@@ -1,4 +1,4 @@
-import Layout from "./Layout.jsx";
+import Layout from "./Layout";
 
 import Alerts from "./Alerts";
 
@@ -63,8 +63,6 @@ import HistoricalGamesView from "./HistoricalGamesView";
 import Diagnostics from "./Diagnostics";
 
 import AdminDevTools from "./AdminDevTools";
-
-import Index from "./Index";
 
 import AILearningLab from "./AILearningLab";
 
@@ -133,9 +131,7 @@ const PAGES = {
     Diagnostics: Diagnostics,
     
     AdminDevTools: AdminDevTools,
-    
-    Index: Index,
-    
+
     AILearningLab: AILearningLab,
     
 }
@@ -226,9 +222,7 @@ function PagesContent() {
                 <Route path="/Diagnostics" element={<Diagnostics />} />
                 
                 <Route path="/AdminDevTools" element={<AdminDevTools />} />
-                
-                <Route path="/Index" element={<Index />} />
-                
+
                 <Route path="/AILearningLab" element={<AILearningLab />} />
                 
             </Routes>

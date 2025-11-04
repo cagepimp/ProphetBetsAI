@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { callEdgeFunction } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
-import * as functions from '@/api/functions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Loader2, ShieldAlert, AlertCircle, RefreshCw, Zap } from 'lucide-react';
@@ -108,7 +107,7 @@ export default function InjuriesPage() {
       console.log(`🏥 Loading ${activeSport} injuries...`);
       
       // Call fetchInjuries function via Base44
-      const response = await functions.invoke('fetchInjuries', { 
+      const response = await callEdgeFunction('fetchInjuries', { 
         sport: activeSport 
       });
       
@@ -150,7 +149,7 @@ export default function InjuriesPage() {
       for (const sport of sports) {
         try {
           console.log(`   Fetching ${sport}...`);
-          const response = await functions.invoke('fetchInjuries', { 
+          const response = await callEdgeFunction('fetchInjuries', { 
             sport: sport 
           });
           

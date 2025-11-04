@@ -4,7 +4,6 @@
 import { useState, useEffect } from 'react';
 import { callEdgeFunction } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
-import * as functions from '@/api/functions';
 import { Brain, Database, TrendingUp, Target, Zap, Upload, Download, 
          BarChart3, Award, Clock, CheckCircle, XCircle, AlertCircle,
          PlayCircle, RefreshCw, Trash2, Eye, FileText, Activity } from 'lucide-react';
@@ -23,7 +22,7 @@ export default function AILearningLab() {
   // ============================================
   const loadLearningStats = async () => {
     try {
-      const response = await functions.invoke('getLearningSystemStats');
+      const response = await callEdgeFunction('getLearningSystemStats');
       const data = response?.data || response;
       
       setLearningStats({
@@ -50,7 +49,7 @@ export default function AILearningLab() {
   // ============================================
   const loadPatterns = async () => {
     try {
-      const response = await functions.invoke('getLearnedPatterns', {
+      const response = await callEdgeFunction('getLearnedPatterns', {
         minAccuracy: 70,
         limit: 50
       });
@@ -98,7 +97,7 @@ export default function AILearningLab() {
       reader.onload = async (e) => {
         const csvText = e.target.result;
         
-        const response = await functions.invoke('ingestHistoricalCSV', {
+        const response = await callEdgeFunction('ingestHistoricalCSV', {
           csvData: csvText,
           source: 'manual_upload',
           autoTrain: true
@@ -132,7 +131,7 @@ export default function AILearningLab() {
     try {
       const jsonData = JSON.parse(manualData);
       
-      const response = await functions.invoke('ingestManualData', {
+      const response = await callEdgeFunction('ingestManualData', {
         data: jsonData,
         dataType: 'historical_games',
         autoTrain: true
@@ -158,7 +157,7 @@ export default function AILearningLab() {
     setLoading(prev => ({ ...prev, [key]: true }));
 
     try {
-      const response = await functions.invoke('scrapeSportsReference', {
+      const response = await callEdgeFunction('scrapeSportsReference', {
         sport,
         season,
         includeStats: true,
@@ -183,7 +182,7 @@ export default function AILearningLab() {
     setLoading(prev => ({ ...prev, [key]: true }));
 
     try {
-      const response = await functions.invoke('importOddsWarehouseData', {
+      const response = await callEdgeFunction('importOddsWarehouseData', {
         sport: 'NFL',
         startYear: 2020,
         endYear: 2025
@@ -207,7 +206,7 @@ export default function AILearningLab() {
     setLoading(prev => ({ ...prev, [key]: true }));
 
     try {
-      const response = await functions.invoke('runHistoricalBacktest', {
+      const response = await callEdgeFunction('runHistoricalBacktest', {
         sport,
         numGames,
         savePredictions: true,
@@ -234,7 +233,7 @@ export default function AILearningLab() {
     setLoading(prev => ({ ...prev, [key]: true }));
 
     try {
-      const response = await functions.invoke('gradeAllPredictions', {
+      const response = await callEdgeFunction('gradeAllPredictions', {
         autoLearn: true
       });
 
@@ -261,7 +260,7 @@ export default function AILearningLab() {
     setLoading(prev => ({ ...prev, [key]: true }));
 
     try {
-      const response = await functions.invoke('forceRetrainAnalyzer', {
+      const response = await callEdgeFunction('forceRetrainAnalyzer', {
         clearExistingPatterns: false,
         minDataPoints: 100
       });
@@ -282,7 +281,7 @@ export default function AILearningLab() {
   // ============================================
   const handleExportPatterns = async () => {
     try {
-      const response = await functions.invoke('exportLearnedPatterns');
+      const response = await callEdgeFunction('exportLearnedPatterns');
       const data = response?.data || response;
       
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -314,7 +313,7 @@ export default function AILearningLab() {
     setLoading(prev => ({ ...prev, [key]: true }));
 
     try {
-      await functions.invoke('clearAllLearningData', {
+      await callEdgeFunction('clearAllLearningData', {
         confirm: true
       });
       

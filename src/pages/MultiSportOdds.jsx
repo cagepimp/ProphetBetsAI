@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { callEdgeFunction } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
-import * as functions from '@/api/functions';
 import { Loader2, Brain, CheckCircle, TrendingUp, DollarSign, Target, Award } from 'lucide-react';
 
 export default function AITrainingDashboard() {
@@ -28,7 +27,7 @@ export default function AITrainingDashboard() {
 
   const loadStats = async () => {
     try {
-      const response = await functions.invoke('getGradingStats', { sport: selectedSport });
+      const response = await callEdgeFunction('getGradingStats', { sport: selectedSport });
       const data = response?.data || response;
       
       setStats({
@@ -69,7 +68,7 @@ export default function AITrainingDashboard() {
     setLoading(prev => ({ ...prev, [key]: true }));
 
     try {
-      const response = await functions.invoke('markPastGamesCompleted', { 
+      const response = await callEdgeFunction('markPastGamesCompleted', { 
         sport: selectedSport 
       });
       const data = response?.data || response;
@@ -93,18 +92,18 @@ export default function AITrainingDashboard() {
 
     try {
       // Step 1: Fetch real scores from ESPN/CBS
-      const scoresResponse = await functions.invoke('fetchGameResults', { 
+      const scoresResponse = await callEdgeFunction('fetchGameResults', { 
         sport: selectedSport 
       });
       
       // Step 2: Grade predictions against actual results
-      const gradeResponse = await functions.invoke('autoVerifyFinishedGames', { 
+      const gradeResponse = await callEdgeFunction('autoVerifyFinishedGames', { 
         sport: selectedSport 
       });
       const data = gradeResponse?.data || gradeResponse;
       
       // Step 3: Feed results to AI learning system
-      const learnResponse = await functions.invoke('trainAnalyzer', {
+      const learnResponse = await callEdgeFunction('trainAnalyzer', {
         sport: selectedSport,
         gradedGames: data.gradedGames
       });
@@ -129,7 +128,7 @@ export default function AITrainingDashboard() {
 
     try {
       // This runs the deep analysis that pre-populates database
-      const response = await functions.invoke('autoAnalyzeAndVerify');
+      const response = await callEdgeFunction('autoAnalyzeAndVerify');
       const data = response?.data || response;
       
       alert(`✅ Scheduled Analysis Complete\n📊 Analyzed ${data.gamesAnalyzed || 0} games\n💾 Results saved to database`);
@@ -150,7 +149,7 @@ export default function AITrainingDashboard() {
     setLoading(prev => ({ ...prev, [key]: true }));
 
     try {
-      const response = await functions.invoke('trainFromHistoricalData', { 
+      const response = await callEdgeFunction('trainFromHistoricalData', { 
         sport: selectedSport 
       });
       const data = response?.data || response;
@@ -173,7 +172,7 @@ export default function AITrainingDashboard() {
     setLoading(prev => ({ ...prev, [key]: true }));
 
     try {
-      const response = await functions.invoke('getLearningProgress', { 
+      const response = await callEdgeFunction('getLearningProgress', { 
         sport: selectedSport 
       });
       const data = response?.data || response;

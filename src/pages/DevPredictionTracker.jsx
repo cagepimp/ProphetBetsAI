@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { callEdgeFunction } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
-import * as functions from '@/api/functions';
 
 export default function DevPredictionTracker() {
   const [games, setGames] = useState([]);
@@ -119,12 +118,12 @@ export default function DevPredictionTracker() {
       const sport = selectedSport === 'all' ? 'americanfootball_nfl' : selectedSport;
       
       console.log('🧠 Running learning algorithm...');
-      const learningResult = await functions.invoke('learningAlgorithm', {
+      const learningResult = await callEdgeFunction('learningAlgorithm', {
         sport: sport
       });
       
       console.log('📚 Applying learning to analyzer...');
-      const applyResult = await functions.invoke('applyLearning', {
+      const applyResult = await callEdgeFunction('applyLearning', {
         sport: sport
       });
       

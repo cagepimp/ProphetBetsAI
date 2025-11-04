@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, TrendingUp, Download, Filter, CheckCircle, XCircle, Award } from 'lucide-react';
 import { callEdgeFunction } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
-import * as functions from '@/api/functions';
 
 export default function PredictionHistory() {
   const [selectedSport, setSelectedSport] = useState('NFL');
@@ -19,7 +18,7 @@ export default function PredictionHistory() {
     try {
       console.log(`📊 Loading prediction history for ${selectedSport}...`);
       
-      const response = await functions.invoke('predictionHistory', {
+      const response = await callEdgeFunction('predictionHistory', {
         action: 'getHistory',
         sport: selectedSport,
         limit: 100,
@@ -43,7 +42,7 @@ export default function PredictionHistory() {
   const loadInsights = async () => {
     try {
       setLoading(true);
-      const response = await functions.invoke('predictionHistory', {
+      const response = await callEdgeFunction('predictionHistory', {
         action: 'getTrends',
         sport: selectedSport
       });

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Loader2, Users, TrendingUp, ChevronDown, Filter } from "lucide-react";
 import { callEdgeFunction } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
-import * as functions from '@/api/functions';
 
 const SPORT_CONFIG = {
   'NFL': { icon: '🏈', color: 'from-blue-500 to-blue-600' },
@@ -94,7 +93,7 @@ export default function PropsPage() {
             try {
                 console.log("🔵 Starting to load props...");
                 
-                const response = await functions.invoke('runAnalyzerProps');
+                const response = await callEdgeFunction('runAnalyzerProps');
                 
                 console.log("🟢 Response received:", response);
                 const data = response?.data;

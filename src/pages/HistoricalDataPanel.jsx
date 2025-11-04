@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { callEdgeFunction } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
-import * as functions from '@/api/functions';
 import { Database, TrendingUp, FileText, Loader, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
 
 export default function HistoricalDataPanel() {
@@ -26,7 +25,7 @@ export default function HistoricalDataPanel() {
     try {
       console.log(`🚀 Invoking ${functionName}...`, params);
       
-      const response = await functions.invoke(functionName, params);
+      const response = await callEdgeFunction(functionName, params);
       
       console.log(`✅ ${functionName} response:`, response);
       

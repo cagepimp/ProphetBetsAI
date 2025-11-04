@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { callEdgeFunction } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
-import * as functions from '@/api/functions';
 import { FileText } from 'lucide-react';
 
 export default function ManualTools() {
@@ -45,7 +44,7 @@ export default function ManualTools() {
     try {
       console.log('🎯 Analyzing game:', game.id);
       
-      const result = await functions.invoke('analyzerV3', {
+      const result = await callEdgeFunction('analyzerV3', {
         sport: game.sport,
         gameId: game.id
       });

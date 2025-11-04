@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase, getGames } from "@/api/supabaseClient";
+import { supabase, getGames, populateGames, fetchOdds, runAnalyzer, fetchInjuries } from "@/api/supabaseClient";
 import { Loader2, RefreshCw, AlertCircle, Brain, Users, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -76,22 +76,86 @@ export default function NFLPage() {
   const handleRefreshGames = async () => {
     setIsRefreshing(true);
     try {
-      // Reload games from database
+      console.log('🔄 Starting NFL schedule refresh...');
+
+      // Step 1: Populate games from ESPN
+      const populateResult = await populateGames('NFL', null, null, true);
+      console.log('✅ Populate result:', populateResult);
+
+      // Step 2: Fetch betting odds
+      const oddsResult = await fetchOdds('NFL');
+      console.log('✅ Odds result:', oddsResult);
+
+      // Step 3: Fetch injury reports
+      const injuriesResult = await fetchInjuries('NFL');
+      console.log('✅ Injuries result:', injuriesResult);
+
+      // Step 4: Reload games from database
       await fetchData();
-      alert('✅ NFL games reloaded from database!\n\nNote: Schedule updates require backend Edge Functions (coming soon)');
+
+      // Success message
+      alert(`✅ NFL Data Refreshed Successfully!
+
+📅 Games: ${populateResult.gamesCreated} created, ${populateResult.gamesUpdated} updated
+💰 Odds: ${oddsResult.oddsUpdated} updated
+🏥 Injuries: ${injuriesResult.injuriesCreated + injuriesResult.injuriesUpdated} updated`);
+
     } catch (err) {
-      console.error('❌ Reload failed:', err);
-      alert(`❌ Failed to reload: ${err.message}`);
+      console.error('❌ Refresh failed:', err);
+      alert(`❌ Refresh Failed: ${err.message}\n\nCheck console for details.`);
     } finally {
       setIsRefreshing(false);
     }
   };
 
   const handleAnalyzeGame = async (game) => {
-    if (!game || !game.id) return;
-    const gameId = game.id;
+    if (!game || !game.external_id) {
+      alert('❌ Cannot analyze: Game ID not found');
+      return;
+    }
 
-    alert('⚠️ Game analysis requires backend Edge Functions that are not yet implemented.\n\nFor now, you can view existing game data from the database.');
+    const gameId = game.external_id || game.id;
+
+    try {
+      console.log('🤖 Starting AI analysis for game:', gameId);
+
+      // Call run-analyzer Edge Function
+      const result = await runAnalyzer(gameId, 'NFL', 'standard');
+      console.log('✅ Analysis result:', result);
+
+      if (result.success && result.analysis) {
+        const analysis = result.analysis;
+
+        // Display analysis
+        alert(`🎯 AI Analysis Complete!
+
+THE EDGE:
+${analysis.the_edge}
+
+PREDICTION:
+Winner: ${analysis.predictions?.winner || 'N/A'}
+Confidence: ${analysis.predictions?.confidence || 0}%
+
+RECOMMENDED BET:
+${analysis.recommended_bets?.[0]?.selection || 'None'}
+Odds: ${analysis.recommended_bets?.[0]?.odds || 'N/A'}
+Confidence: ${analysis.recommended_bets?.[0]?.confidence || 0}%
+
+KEY FACTORS:
+${analysis.key_factors?.slice(0, 3).join('\n') || 'None'}
+
+Prediction ID: ${result.predictionId}`);
+
+        // Reload game to show updated analysis
+        await fetchData();
+      } else {
+        throw new Error(result.error || 'Analysis failed');
+      }
+
+    } catch (err) {
+      console.error('❌ Analysis failed:', err);
+      alert(`❌ Analysis Failed: ${err.message}\n\nCheck console for details.`);
+    }
   };
 
   const formatOdds = (odds) => {

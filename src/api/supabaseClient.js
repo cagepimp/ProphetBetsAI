@@ -374,69 +374,23 @@ export async function callEdgeFunction(functionName, payload = {}, options = {})
 }
 
 /**
- * Run analyzer on a game
- * @param {string} gameId - Game ID
- * @param {string} sport - Sport type (NFL, NBA, MLB, etc.)
- * @param {boolean} forceReanalyze - Force re-analysis even if already analyzed
- * @returns {Promise<Object>} Analysis result
+ * Populate games - Fetch schedules from ESPN
+ * @param {string} sport - Sport type (NFL, NBA, MLB, NHL, CFB, UFC, Golf)
+ * @param {number} season - Season year (optional)
+ * @param {number} week - Week number (optional, for NFL/CFB)
+ * @param {boolean} forceRefresh - Force refresh even if games exist
+ * @returns {Promise<Object>} Games created/updated result
  */
-export async function runAnalyzer(gameId, sport, forceReanalyze = false) {
-  if (!gameId) {
-    throw new Error('gameId is required for runAnalyzer')
-  }
+export async function populateGames(sport, season = null, week = null, forceRefresh = false) {
   if (!sport) {
-    throw new Error('sport is required for runAnalyzer')
+    throw new Error('sport is required for populateGames')
   }
 
-  return callEdgeFunction('runAnalyzer10000Plus', {
-    gameId,
-    sport,
-    forceReanalyze
-  }, {
-    timeout: 120000, // 2 minutes for analysis
-    retries: 1 // Retry once on failure
-  })
-}
-
-/**
- * Fetch latest odds from TheOddsAPI
- * @param {string} sport - Sport type
- * @param {string} gameId - Optional game ID to fetch odds for specific game
- * @returns {Promise<Object>} Odds update result
- */
-export async function fetchOdds(sport, gameId = null) {
-  if (!sport) {
-    throw new Error('sport is required for fetchOdds')
-  }
-
-  return callEdgeFunction('fetchOdds', {
-    sport,
-    gameId
-  }, {
-    timeout: 30000, // 30 seconds
-    retries: 2 // Retry twice for network issues
-  })
-}
-
-/**
- * Update weekly schedule from ESPN
- * @param {string} sport - Sport type
- * @param {number} season - Season year
- * @param {number} week - Week number (optional)
- * @returns {Promise<Object>} Schedule update result
- */
-export async function updateSchedule(sport, season, week = null) {
-  if (!sport) {
-    throw new Error('sport is required for updateSchedule')
-  }
-  if (!season) {
-    throw new Error('season is required for updateSchedule')
-  }
-
-  return callEdgeFunction('updateWeeklySchedule', {
+  return callEdgeFunction('populate-games', {
     sport,
     season,
-    week
+    week,
+    forceRefresh
   }, {
     timeout: 60000, // 1 minute
     retries: 1
@@ -444,13 +398,125 @@ export async function updateSchedule(sport, season, week = null) {
 }
 
 /**
- * Auto-grade completed games and learn from patterns
- * @returns {Promise<Object>} Grading and learning result
+ * Fetch betting odds from The Odds API
+ * @param {string} sport - Sport type
+ * @param {Array} markets - Markets to fetch (h2h, spreads, totals)
+ * @param {Array} bookmakers - Specific bookmakers (optional)
+ * @returns {Promise<Object>} Odds update result
  */
-export async function autoGradeAndLearn() {
-  return callEdgeFunction('autoGradeAndLearn', {}, {
-    timeout: 180000, // 3 minutes for grading and learning
-    retries: 0 // Don't retry to avoid duplicate processing
+export async function fetchOdds(sport, markets = ['h2h', 'spreads', 'totals'], bookmakers = null) {
+  if (!sport) {
+    throw new Error('sport is required for fetchOdds')
+  }
+
+  return callEdgeFunction('fetch-odds', {
+    sport,
+    markets,
+    bookmakers
+  }, {
+    timeout: 30000, // 30 seconds
+    retries: 2
+  })
+}
+
+/**
+ * Run AI analyzer on a game
+ * @param {string} gameId - Game ID (external_id from games table)
+ * @param {string} sport - Sport type
+ * @param {string} analysisDepth - Analysis depth (quick, standard, deep)
+ * @returns {Promise<Object>} Analysis result with predictions
+ */
+export async function runAnalyzer(gameId, sport, analysisDepth = 'standard') {
+  if (!gameId) {
+    throw new Error('gameId is required for runAnalyzer')
+  }
+  if (!sport) {
+    throw new Error('sport is required for runAnalyzer')
+  }
+
+  return callEdgeFunction('run-analyzer', {
+    gameId,
+    sport,
+    analysisDepth
+  }, {
+    timeout: 120000, // 2 minutes for AI analysis
+    retries: 1
+  })
+}
+
+/**
+ * Sync player rosters from ESPN
+ * @param {string} sport - Sport type
+ * @param {Array} teamIds - Specific team IDs (optional)
+ * @param {boolean} forceRefresh - Force refresh even if players exist
+ * @returns {Promise<Object>} Players created/updated result
+ */
+export async function syncRosters(sport, teamIds = null, forceRefresh = false) {
+  if (!sport) {
+    throw new Error('sport is required for syncRosters')
+  }
+
+  return callEdgeFunction('sync-rosters', {
+    sport,
+    teamIds,
+    forceRefresh
+  }, {
+    timeout: 120000, // 2 minutes
+    retries: 1
+  })
+}
+
+/**
+ * Generate AI player prop recommendations
+ * @param {string} gameId - Game ID (optional)
+ * @param {string} sport - Sport type (optional)
+ * @param {Array} playerIds - Specific player IDs (optional)
+ * @returns {Promise<Object>} Props generated result
+ */
+export async function generateProps(gameId = null, sport = null, playerIds = null) {
+  return callEdgeFunction('generate-props', {
+    gameId,
+    sport,
+    playerIds
+  }, {
+    timeout: 180000, // 3 minutes
+    retries: 1
+  })
+}
+
+/**
+ * Update results and grade predictions
+ * @param {string} sport - Sport type (optional)
+ * @param {string} gameId - Specific game ID (optional)
+ * @param {string} date - Specific date (optional)
+ * @returns {Promise<Object>} Grading result
+ */
+export async function updateResults(sport = null, gameId = null, date = null) {
+  return callEdgeFunction('update-results', {
+    sport,
+    gameId,
+    date
+  }, {
+    timeout: 180000, // 3 minutes
+    retries: 0 // Don't retry to avoid duplicate grading
+  })
+}
+
+/**
+ * Fetch injury reports from ESPN
+ * @param {string} sport - Sport type
+ * @returns {Promise<Object>} Injuries updated result
+ */
+export async function fetchInjuries(sport) {
+  if (!sport) {
+    throw new Error('sport is required for fetchInjuries')
+  }
+
+  return callEdgeFunction('fetch-injuries', {
+    sport
+  }, {
+    timeout: 60000, // 1 minute
+    retries: 1
   })
 }
 

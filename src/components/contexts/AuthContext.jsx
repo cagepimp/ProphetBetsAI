@@ -99,12 +99,4 @@ export function useAuth() {
   return context;
 }
 
-// Alias exports for convenience
-export const ProphetBetAIContext = AuthContext;
-export const ProphetBetAIProvider = AuthProvider;
-export const useProphetBetAI = useAuth;
-
-// Legacy exports for backward compatibility (deprecated)
-export const Base44Context = AuthContext;
-export const Base44Provider = AuthProvider;
-export const useBase44 = useAuth;
+export default AuthContext;

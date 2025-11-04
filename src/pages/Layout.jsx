@@ -2,11 +2,11 @@
 import React from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import { Toaster } from "@/components/ui/toaster";
-import { Base44Provider } from "@/components/contexts/Base44Context";
+import { AuthProvider } from "@/components/contexts/AuthContext";
 
 export default function Layout({ children, currentPageName }) {
   return (
-    <Base44Provider>
+    <AuthProvider>
       <div className="flex h-screen bg-slate-950">
         <Sidebar />
         {/* This div correctly offsets the main content area */}
@@ -17,7 +17,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
         <Toaster />
       </div>
-    </Base44Provider>
+    </AuthProvider>
   );
 }
 

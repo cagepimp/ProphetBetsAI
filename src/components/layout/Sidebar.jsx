@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { useBase44 } from "@/components/contexts/Base44Context";
+import { useAuth } from "@/components/contexts/AuthContext";
 import {
   Shield,
   GraduationCap,
@@ -45,7 +45,7 @@ const adminPages = [
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, loading, error } = useBase44();
+  const { user, loading, error } = useAuth();
   
   // More defensive admin check
   const isAdmin = React.useMemo(() => {

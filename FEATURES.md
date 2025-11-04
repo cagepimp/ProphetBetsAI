@@ -165,8 +165,8 @@
 ## 🏗️ Technical Architecture
 
 ### Data Layer
-- **Base44 SDK** integration for backend API calls
-- Real-time data fetching from entities:
+- **Supabase** integration for backend database and API calls
+- Real-time data fetching from tables:
   - Game
   - Player
   - PlayerProp
@@ -191,7 +191,7 @@ src/
 │   ├── dashboard/      # Dashboard widgets
 │   └── data/           # Team data (NFL, NBA, MLB, NHL)
 ├── pages/              # 34 page components
-└── api/                # Base44 client & functions
+└── api/                # Supabase client & functions
 ```
 
 ### Styling
@@ -204,7 +204,7 @@ src/
 ### State Management
 - React hooks (useState, useEffect)
 - Local storage for persistence (bankroll)
-- Context API for auth (Base44Context)
+- Context API for auth (AuthContext with Supabase)
 
 ## 📊 Sports Covered
 
@@ -243,7 +243,7 @@ src/
 - Input validation on all forms
 - XSS protection (React escaping)
 - HTTPS-only API calls
-- Secure authentication via Base44
+- Secure authentication via Supabase
 - No sensitive data in localStorage
 - Error boundaries for graceful failures
 
@@ -259,7 +259,7 @@ src/
 - Code splitting with dynamic imports
 - Lazy loading for heavy components
 - Optimized re-renders with React.memo
-- Efficient data fetching with Base44
+- Efficient data fetching with Supabase
 - Local caching where appropriate
 - Build size: 744.95 kB (188.05 kB gzipped)
 

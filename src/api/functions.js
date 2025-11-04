@@ -101,8 +101,6 @@ export const testSportsbooks = createFunctionWrapper("testSportsbooks");
 
 export const testRapidAPI = createFunctionWrapper("testRapidAPI");
 
-export const fetchOdds = createFunctionWrapper("fetchOdds");
-
 export const testSportsGameOdds = createFunctionWrapper("testSportsGameOdds");
 
 export const fetchAnalyzerProps = createFunctionWrapper("fetchAnalyzerProps");
@@ -476,8 +474,6 @@ export const migrateRosters = createFunctionWrapper("migrateRosters");
 export const getLearningSystemStats = createFunctionWrapper("getLearningSystemStats");
 
 export const getLearnedPatterns = createFunctionWrapper("getLearnedPatterns");
-
-export const autoGradeAndLearn = createFunctionWrapper("autoGradeAndLearn");
 
 export const cronScheduler = createFunctionWrapper("cronScheduler");
 

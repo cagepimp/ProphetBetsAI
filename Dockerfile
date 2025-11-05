@@ -22,11 +22,8 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-
-# Install production dependencies only
-RUN npm install --production
+# Install serve globally for production
+RUN npm install -g serve
 
 # Copy built assets from builder stage
 COPY --from=builder /app/dist ./dist
@@ -37,5 +34,5 @@ EXPOSE 8080
 # Set environment to production
 ENV NODE_ENV=production
 
-# Start the preview server
-CMD ["npm", "run", "preview", "--", "--port", "8080", "--host", "0.0.0.0"]
+# Serve the static files on port 8080
+CMD ["serve", "-s", "dist", "-l", "8080"]

@@ -68,7 +68,7 @@ import AdminDevTools from "./AdminDevTools";
 
 import AILearningLab from "./AILearningLab";
 
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 
 const PAGES = {
     
@@ -160,11 +160,11 @@ function PagesContent() {
     
     return (
         <Layout currentPageName={currentPage}>
-            <Routes>            
-                
-                    <Route path="/" element={<Alerts />} />
-                
-                
+            <Routes>
+
+                    <Route path="/" element={<Home />} />
+
+
                 <Route path="/Alerts" element={<Alerts />} />
                 
                 <Route path="/Algorithm" element={<Algorithm />} />
@@ -230,7 +230,10 @@ function PagesContent() {
                 <Route path="/AdminDevTools" element={<AdminDevTools />} />
 
                 <Route path="/AILearningLab" element={<AILearningLab />} />
-                
+
+                {/* Catch-all route - redirect to home for undefined paths */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+
             </Routes>
         </Layout>
     );

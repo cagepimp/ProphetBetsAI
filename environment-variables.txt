@@ -1,0 +1,24 @@
+# ProphetBet AI - Environment Variables Template
+# Copy to Railway Dashboard → Variables tab
+
+# Node Environment
+NODE_ENV=production
+
+# Supabase Configuration
+VITE_SUPABASE_URL=https://abglcmahihbmglkbolir.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiZ2xjbWFoaWhibWdsa2JvbGlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNzg2MjEsImV4cCI6MjA3NzY1NDYyMX0.YOUR_ANON_KEY_HERE
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiZ2xjbWFoaWhibWdsa2JvbGlyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjA3ODYyMSwiZXhwIjoyMDc3NjU0NjIxfQ.Ot1R50mLuVb-Byo0Rg83I4vMa3vMeTMbQmnWdWmfKBM
+
+# Application Settings
+VITE_APP_NAME=ProphetBet AI
+VITE_APP_VERSION=2.0.0
+
+# Database Connection String (for direct connections if needed)
+DATABASE_URL=postgresql://postgres:[YOUR_DB_PASSWORD]@db.abglcmahihbmglkbolir.supabase.co:5432/postgres
+
+# INSTRUCTIONS:
+# 1. Copy these variables to Railway Dashboard → Variables tab
+# 2. Replace YOUR_ANON_KEY_HERE and YOUR_DB_PASSWORD with your actual keys
+# 3. Railway automatically sets PORT - don't add it
+# 4. All VITE_ variables are accessible in your frontend
+# 5. SUPABASE_SERVICE_ROLE_KEY is server-side only

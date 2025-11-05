@@ -21,16 +21,17 @@ export default function TrendingProps() {
       // Fetch player props with high confidence
       const playerProps = await getPlayerProps({
         confidence: { $gte: 70 }
-      });
+      }).catch(() => []);
 
       // Sort by confidence and limit to 8
-      const sortedProps = playerProps
+      const sortedProps = (playerProps || [])
         .sort((a, b) => (b.confidence || 0) - (a.confidence || 0))
         .slice(0, 8);
 
       setProps(sortedProps || []);
     } catch (err) {
       console.error('Error loading trending props:', err);
+      setProps([]);
     } finally {
       setLoading(false);
     }

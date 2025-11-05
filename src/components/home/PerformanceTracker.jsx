@@ -22,7 +22,7 @@ export default function PerformanceTracker() {
       const predictions = await getPredictions({
         created_at: { $gte: thirtyDaysAgo.toISOString() },
         result: { $exists: true }
-      });
+      }).catch(() => []);
 
       // Calculate stats
       const total = predictions?.length || 0;

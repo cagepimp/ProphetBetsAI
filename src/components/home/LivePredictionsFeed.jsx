@@ -35,7 +35,8 @@ export default function LivePredictionsFeed() {
       setTopPicks(sortedGames || []);
     } catch (err) {
       console.error('Error loading top picks:', err);
-      setError(err.message);
+      // Don't set error state for auth errors - just show empty state
+      setTopPicks([]);
     } finally {
       setLoading(false);
     }

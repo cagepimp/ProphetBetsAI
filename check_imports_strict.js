@@ -23,7 +23,7 @@ function getAllFiles(dir, fileList = []) {
 }
 
 // Extract imports from file content
-function extractImports(content, filePath) {
+function extractImports(content) {
   const lines = content.split('\n');
   const imports = [];
 
@@ -49,7 +49,7 @@ function getActualFilename(dir, filename) {
     // Find exact case match
     const found = files.find(f => f.toLowerCase() === filename.toLowerCase());
     return found || null;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

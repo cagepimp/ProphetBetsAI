@@ -16,7 +16,19 @@ import {
 // Export Supabase helper functions with Base44-style names for compatibility
 export const Game = {
   filter: getGames,
-  get: getGameById
+  get: getGameById,
+  list: async () => await getGames({}),
+  update: async (id, data) => {
+    const { data: result, error } = await supabase
+      .from('games')
+      .update(data)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return result;
+  }
 };
 
 export const Player = {

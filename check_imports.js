@@ -23,7 +23,7 @@ function getAllFiles(dir, fileList = []) {
 }
 
 // Extract imports from file content
-function extractImports(content, filePath) {
+function extractImports(content) {
   const lines = content.split('\n');
   const imports = [];
 
@@ -80,10 +80,8 @@ function verifyCaseSensitivity(actualPath, importedPath, fromFile) {
 
   // Remove extension from resolvedImport if it doesn't have one
   const extensions = ['.js', '.jsx', '.ts', '.tsx'];
-  let importExt = '';
   for (const ext of extensions) {
     if (resolvedImport.endsWith(ext)) {
-      importExt = ext;
       resolvedImport = resolvedImport.slice(0, -ext.length);
       break;
     }

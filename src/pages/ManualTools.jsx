@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { callEdgeFunction, updateSchedule, runAnalyzer, fetchOdds, autoGradeAndLearn } from '@/api/supabaseClient';
+import { callEdgeFunction, updateSchedule, runAnalyzer, fetchOdds } from '@/api/supabaseClient';
 import * as entities from '@/api/entities';
 import { FileText, RefreshCw, Brain, TrendingUp, Award } from 'lucide-react';
 

@@ -1,0 +1,79 @@
+# Copy these environment variables to Render Dashboard
+# Go to: Render Dashboard > Your Service > Environment
+
+# =============================================================================
+# REQUIRED VARIABLES
+# =============================================================================
+
+NODE_ENV=production
+
+VITE_SUPABASE_URL=https://abglcmahihbmglkbolir.supabase.co
+
+# GET THIS FROM SUPABASE DASHBOARD:
+# Go to: https://supabase.com/dashboard > Your Project > Settings > API
+# Copy the "anon" / "public" key
+VITE_SUPABASE_ANON_KEY=paste-your-anon-key-here
+
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiZ2xjbWFoaWhibWdsa2JvbGlyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MjA3ODYyMSwiZXhwIjoyMDc3NjU0NjIxfQ.Ot1R50mLuVb-Byo0Rg83I4vMa3vMeTMbQmnWdWmfKBM
+
+# SET THIS AFTER DEPLOYMENT - Use your Render URL
+# Example: https://prophetbet-ai.onrender.com
+VITE_FRONTEND_URL=https://your-app-name.onrender.com
+
+
+# =============================================================================
+# OPTIONAL API KEYS (For enhanced features)
+# =============================================================================
+
+# TheOddsAPI - Live betting odds
+# Sign up at: https://the-odds-api.com/
+ODDS_API_KEY=your-odds-api-key-here
+
+# ESPN API
+ESPN_API_KEY=your-espn-api-key-here
+
+# RapidAPI - Additional sports data
+# Sign up at: https://rapidapi.com/
+RAPIDAPI_KEY=your-rapidapi-key-here
+
+
+# =============================================================================
+# FEATURE FLAGS (Optional - defaults are set in render.yaml)
+# =============================================================================
+# Only add these if you want to override the defaults
+
+VITE_ENABLE_NFL=true
+VITE_ENABLE_CFB=true
+VITE_ENABLE_NBA=true
+VITE_ENABLE_MLB=true
+VITE_ENABLE_UFC=true
+VITE_ENABLE_GOLF=true
+
+VITE_ENABLE_LIVE_ODDS=true
+VITE_ENABLE_PROPS_ANALYZER=true
+VITE_ENABLE_AI_LEARNING=true
+VITE_ENABLE_ALERTS=true
+
+VITE_DEFAULT_ANALYZER_VERSION=v10000plus
+VITE_MIN_CONFIDENCE_THRESHOLD=60
+
+VITE_DEBUG_MODE=false
+VITE_ENABLE_PERFORMANCE_MONITORING=false
+
+
+# =============================================================================
+# INSTRUCTIONS
+# =============================================================================
+#
+# 1. Copy each variable name and value
+# 2. In Render Dashboard, go to your service > Environment
+# 3. Click "Add Environment Variable"
+# 4. Paste the name (e.g., NODE_ENV) and value (e.g., production)
+# 5. Click "Save Changes"
+# 6. Render will automatically redeploy with the new variables
+#
+# IMPORTANT:
+# - Get VITE_SUPABASE_ANON_KEY from your Supabase Dashboard first!
+# - Update VITE_FRONTEND_URL after your first deployment
+# - Keep SUPABASE_SERVICE_ROLE_KEY secret (don't share publicly)
+#

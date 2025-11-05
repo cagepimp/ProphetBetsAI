@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: prophetbet-ai
+    runtime: node
+    env: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: ODDS_API_KEY
+        sync: false
+      - key: ESPN_API_KEY
+        sync: false
+      - key: RAPIDAPI_KEY
+        sync: false
+      - key: VITE_FRONTEND_URL
+        sync: false
+      - key: VITE_ENABLE_NFL
+        value: true
+      - key: VITE_ENABLE_CFB
+        value: true
+      - key: VITE_ENABLE_NBA
+        value: true
+      - key: VITE_ENABLE_MLB
+        value: true
+      - key: VITE_ENABLE_UFC
+        value: true
+      - key: VITE_ENABLE_GOLF
+        value: true
+      - key: VITE_ENABLE_LIVE_ODDS
+        value: true
+      - key: VITE_ENABLE_PROPS_ANALYZER
+        value: true
+      - key: VITE_ENABLE_AI_LEARNING
+        value: true
+      - key: VITE_ENABLE_ALERTS
+        value: true
+      - key: VITE_DEFAULT_ANALYZER_VERSION
+        value: v10000plus
+      - key: VITE_MIN_CONFIDENCE_THRESHOLD
+        value: 60
+      - key: VITE_DEBUG_MODE
+        value: false
+      - key: VITE_ENABLE_PERFORMANCE_MONITORING
+        value: false
